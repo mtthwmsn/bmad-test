@@ -97,6 +97,257 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Stages Section -->
+            <div class="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">Stages & Measures</h3>
+                        <button type="button" onclick="document.getElementById('addStageForm').classList.toggle('hidden')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
+                            + Add Stage
+                        </button>
+                    </div>
+
+                    <!-- Add Stage Form -->
+                    <div id="addStageForm" class="hidden mb-6 p-4 border rounded bg-gray-50">
+                        <h4 class="font-semibold mb-3">Add New Stage</h4>
+                        <form method="POST" action="{{ route('admin.competitions.stages.store', $competition) }}">
+                            @csrf
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label for="stage_order" class="block text-sm font-medium text-gray-700">Order *</label>
+                                    <input type="number" name="order" id="stage_order" min="1" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="stage_name" class="block text-sm font-medium text-gray-700">Name</label>
+                                    <input type="text" name="name" id="stage_name"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="stage_expected_seconds" class="block text-sm font-medium text-gray-700">Expected Seconds *</label>
+                                    <input type="number" name="expected_seconds" id="stage_expected_seconds" min="1" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="stage_status" class="block text-sm font-medium text-gray-700">Status *</label>
+                                    <select name="status" id="stage_status" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <option value="pending">Pending</option>
+                                        <option value="active">Active</option>
+                                        <option value="complete">Complete</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-end gap-2">
+                                <button type="button" onclick="document.getElementById('addStageForm').classList.add('hidden')" class="text-gray-600 hover:text-gray-900 px-4 py-2">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                    Add Stage
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Existing Stages -->
+                    @if ($competition->stages->count() > 0)
+                        <div class="space-y-4">
+                            @foreach ($competition->stages as $stage)
+                                <div class="border rounded-lg p-4 bg-white">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded">
+                                                    Stage {{ $stage->order }}
+                                                </span>
+                                                @php
+                                                    $statusColors = [
+                                                        'pending' => 'bg-gray-100 text-gray-800',
+                                                        'active' => 'bg-green-100 text-green-800',
+                                                        'complete' => 'bg-blue-100 text-blue-800',
+                                                    ];
+                                                @endphp
+                                                <span class="px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$stage->status] ?? 'bg-gray-100 text-gray-800' }}">
+                                                    {{ ucfirst($stage->status) }}
+                                                </span>
+                                            </div>
+                                            <h4 class="font-semibold text-lg">{{ $stage->name ?? 'Unnamed Stage' }}</h4>
+                                            <p class="text-sm text-gray-600">Expected: {{ $stage->expected_seconds }}s</p>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <button type="button" onclick="document.getElementById('editStageForm{{ $stage->id }}').classList.toggle('hidden')" class="text-indigo-600 hover:text-indigo-900 text-sm">
+                                                Edit
+                                            </button>
+                                            <form method="POST" action="{{ route('admin.stages.destroy', $stage) }}" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this stage? All measures will also be deleted.');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900 text-sm">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Edit Stage Form -->
+                                    <div id="editStageForm{{ $stage->id }}" class="hidden mb-4 p-4 border rounded bg-gray-50">
+                                        <h5 class="font-semibold mb-3 text-sm">Edit Stage</h5>
+                                        <form method="POST" action="{{ route('admin.stages.update', $stage) }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-700">Order *</label>
+                                                    <input type="number" name="order" value="{{ $stage->order }}" min="1" required
+                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-700">Name</label>
+                                                    <input type="text" name="name" value="{{ $stage->name }}"
+                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-700">Expected Seconds *</label>
+                                                    <input type="number" name="expected_seconds" value="{{ $stage->expected_seconds }}" min="1" required
+                                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-medium text-gray-700">Status *</label>
+                                                    <select name="status" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                        <option value="pending" {{ $stage->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                                        <option value="active" {{ $stage->status === 'active' ? 'selected' : '' }}>Active</option>
+                                                        <option value="complete" {{ $stage->status === 'complete' ? 'selected' : '' }}>Complete</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 flex justify-end gap-2">
+                                                <button type="button" onclick="document.getElementById('editStageForm{{ $stage->id }}').classList.add('hidden')" class="text-gray-600 hover:text-gray-900 px-4 py-2 text-sm">
+                                                    Cancel
+                                                </button>
+                                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm">
+                                                    Update Stage
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- Measures Section -->
+                                    <div class="mt-4 pl-4 border-l-2 border-gray-200">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <h5 class="font-semibold text-sm text-gray-700">Measures</h5>
+                                            <button type="button" onclick="document.getElementById('addMeasureForm{{ $stage->id }}').classList.toggle('hidden')" class="text-green-600 hover:text-green-800 text-xs">
+                                                + Add Measure
+                                            </button>
+                                        </div>
+
+                                        <!-- Add Measure Form -->
+                                        <div id="addMeasureForm{{ $stage->id }}" class="hidden mb-3 p-3 border rounded bg-gray-50">
+                                            <form method="POST" action="{{ route('admin.stages.measures.store', $stage) }}">
+                                                @csrf
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                    <div>
+                                                        <label class="block text-xs font-medium text-gray-700">Name *</label>
+                                                        <input type="text" name="name" required
+                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-medium text-gray-700">Target (ml) *</label>
+                                                        <input type="number" name="target_ml" step="0.1" min="0.1" required
+                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-medium text-gray-700">Order *</label>
+                                                        <input type="number" name="order" min="1" required
+                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3 flex justify-end gap-2">
+                                                    <button type="button" onclick="document.getElementById('addMeasureForm{{ $stage->id }}').classList.add('hidden')" class="text-gray-600 hover:text-gray-900 px-3 py-1 text-xs">
+                                                        Cancel
+                                                    </button>
+                                                    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-xs">
+                                                        Add Measure
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <!-- Existing Measures -->
+                                        @if ($stage->measures->count() > 0)
+                                            <div class="space-y-2">
+                                                @foreach ($stage->measures as $measure)
+                                                    <div class="p-3 border rounded bg-white">
+                                                        <div class="flex justify-between items-center">
+                                                            <div class="flex-1">
+                                                                <div class="flex items-center gap-2">
+                                                                    <span class="px-2 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded">
+                                                                        #{{ $measure->order }}
+                                                                    </span>
+                                                                    <span class="font-medium text-sm">{{ $measure->name }}</span>
+                                                                    <span class="text-xs text-gray-600">{{ $measure->target_ml }}ml</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex gap-2">
+                                                                <button type="button" onclick="document.getElementById('editMeasureForm{{ $measure->id }}').classList.toggle('hidden')" class="text-indigo-600 hover:text-indigo-900 text-xs">
+                                                                    Edit
+                                                                </button>
+                                                                <form method="POST" action="{{ route('admin.measures.destroy', $measure) }}" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this measure?');">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="text-red-600 hover:text-red-900 text-xs">
+                                                                        Delete
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Edit Measure Form -->
+                                                        <div id="editMeasureForm{{ $measure->id }}" class="hidden mt-3 p-3 border rounded bg-gray-50">
+                                                            <form method="POST" action="{{ route('admin.measures.update', $measure) }}">
+                                                                @csrf
+                                                                @method('PUT')
+                                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                                    <div>
+                                                                        <label class="block text-xs font-medium text-gray-700">Name *</label>
+                                                                        <input type="text" name="name" value="{{ $measure->name }}" required
+                                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="block text-xs font-medium text-gray-700">Target (ml) *</label>
+                                                                        <input type="number" name="target_ml" value="{{ $measure->target_ml }}" step="0.1" min="0.1" required
+                                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="block text-xs font-medium text-gray-700">Order *</label>
+                                                                        <input type="number" name="order" value="{{ $measure->order }}" min="1" required
+                                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mt-3 flex justify-end gap-2">
+                                                                    <button type="button" onclick="document.getElementById('editMeasureForm{{ $measure->id }}').classList.add('hidden')" class="text-gray-600 hover:text-gray-900 px-3 py-1 text-xs">
+                                                                        Cancel
+                                                                    </button>
+                                                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs">
+                                                                        Update Measure
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <p class="text-sm text-gray-500 italic">No measures yet. Click "+ Add Measure" to create one.</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-gray-600">No stages yet. Click "+ Add Stage" to create the first stage for this competition.</p>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>

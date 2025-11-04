@@ -48,6 +48,12 @@ class CompetitionController extends Controller
      */
     public function edit(Competition $competition): View
     {
+        $competition->load(['stages' => function ($query) {
+            $query->orderBy('order');
+        }, 'stages.measures' => function ($query) {
+            $query->orderBy('order');
+        }]);
+
         return view('admin.competitions.edit', compact('competition'));
     }
 
