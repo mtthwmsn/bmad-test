@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,9 +20,7 @@ Route::middleware('auth')->group(function () {
 
 // Admin routes (referee only)
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/competitions', function () {
-        return view('admin.competitions.index');
-    })->name('competitions.index');
+    Route::resource('competitions', CompetitionController::class);
 });
 
 require __DIR__.'/auth.php';
