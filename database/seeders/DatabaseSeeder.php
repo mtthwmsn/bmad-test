@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->command->info('Seeding database with Pour Test data...');
 
+        // Create referee user
+        $this->call(RefereeSeeder::class);
+
         // Create 5 competitors
         $this->command->info('Creating 5 competitors...');
         $competitors = Competitor::factory()->count(5)->create();

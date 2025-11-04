@@ -51,6 +51,10 @@ docker compose exec app php artisan migrate
 
 ### 6. Access the application
 - **Application**: http://localhost:8000
+- **Admin Panel**: http://localhost:8000/admin/competitions
+  - **Referee Login**: http://localhost:8000/login
+  - Email: `referee@pourtest.local`
+  - Password: `password`
 - **PHPMyAdmin**: http://localhost:8080
   - Server: db
   - Username: pourtest_user
