@@ -26,6 +26,9 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('competitions', CompetitionController::class);
     Route::resource('competitors', CompetitorController::class);
 
+    // Competitor assignment routes
+    Route::post('competitions/{competition}/assign-competitors', [CompetitionController::class, 'assignCompetitors'])->name('competitions.assign-competitors');
+
     // Stage routes
     Route::post('competitions/{competition}/stages', [StageController::class, 'store'])->name('competitions.stages.store');
     Route::put('stages/{stage}', [StageController::class, 'update'])->name('stages.update');

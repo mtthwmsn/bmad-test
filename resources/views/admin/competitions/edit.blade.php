@@ -310,6 +310,99 @@
                     @endif
                 </div>
             </div>
+
+            <!-- Competitor Assignment Section -->
+            <div class="mt-8 bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <h3 class="text-lg font-semibold mb-6">Assigned Competitors</h3>
+
+                    <form method="POST" action="{{ route('admin.competitions.assign-competitors', $competition) }}">
+                        @csrf
+
+                        <!-- Search/Filter Input -->
+                        <div class="mb-4">
+                            <input type="text"
+                                   id="competitorFilter"
+                                   placeholder="Filter competitors by name..."
+                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <!-- Competitors List -->
+                        @if ($allCompetitors->count() > 0)
+                            <div id="competitorsList" class="space-y-2 max-h-96 overflow-y-auto border rounded p-4 bg-gray-50">
+                                @foreach ($allCompetitors as $competitor)
+                                    <div class="competitor-item flex items-center p-2 hover:bg-white rounded"
+                                         data-name="{{ strtolower($competitor->first_name . ' ' . $competitor->last_name) }}">
+                                        <label class="flex items-center cursor-pointer w-full">
+                                            <input type="checkbox"
+                                                   name="competitor_ids[]"
+                                                   value="{{ $competitor->id }}"
+                                                   {{ in_array($competitor->id, $assignedCompetitorIds) ? 'checked' : '' }}
+                                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            <span class="ml-3 text-sm">
+                                                <span class="font-medium">{{ $competitor->first_name }} {{ $competitor->last_name }}</span>
+                                                @if ($competitor->bar_name)
+                                                    <span class="text-gray-500">- {{ $competitor->bar_name }}</span>
+                                                @endif
+                                                <span class="text-gray-400">({{ $competitor->country_code }})</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="mt-4 flex justify-between items-center">
+                                <p class="text-sm text-gray-600">
+                                    <span id="selectedCount">{{ count($assignedCompetitorIds) }}</span> competitor(s) selected
+                                </p>
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                    Save Competitor Assignments
+                                </button>
+                            </div>
+                        @else
+                            <p class="text-gray-600">No competitors available. <a href="{{ route('admin.competitors.create') }}" class="text-blue-500 hover:text-blue-700">Create a competitor first</a>.</p>
+                        @endif
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- JavaScript for filtering and count -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterInput = document.getElementById('competitorFilter');
+            const competitorItems = document.querySelectorAll('.competitor-item');
+            const selectedCount = document.getElementById('selectedCount');
+            const checkboxes = document.querySelectorAll('input[name="competitor_ids[]"]');
+
+            // Filter functionality
+            if (filterInput) {
+                filterInput.addEventListener('input', function() {
+                    const filterValue = this.value.toLowerCase();
+
+                    competitorItems.forEach(item => {
+                        const name = item.dataset.name;
+                        if (name.includes(filterValue)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Update selected count
+            function updateCount() {
+                const checked = document.querySelectorAll('input[name="competitor_ids[]"]:checked').length;
+                if (selectedCount) {
+                    selectedCount.textContent = checked;
+                }
+            }
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateCount);
+            });
+        });
+    </script>
 </x-app-layout>

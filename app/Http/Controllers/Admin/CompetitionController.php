@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCompetitionRequest;
 use App\Http\Requests\UpdateCompetitionRequest;
 use App\Models\Competition;
+use App\Models\Competitor;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CompetitionController extends Controller
@@ -54,7 +56,14 @@ class CompetitionController extends Controller
             $query->orderBy('order');
         }]);
 
-        return view('admin.competitions.edit', compact('competition'));
+        // Get all competitors and assigned competitor IDs
+        $allCompetitors = Competitor::orderBy('last_name')
+            ->orderBy('first_name')
+            ->get();
+
+        $assignedCompetitorIds = $competition->competitors()->pluck('competitors.id')->toArray();
+
+        return view('admin.competitions.edit', compact('competition', 'allCompetitors', 'assignedCompetitorIds'));
     }
 
     /**
@@ -79,5 +88,22 @@ class CompetitionController extends Controller
         return redirect()
             ->route('admin.competitions.index')
             ->with('success', 'Competition deleted successfully.');
+    }
+
+    /**
+     * Assign competitors to the specified competition.
+     */
+    public function assignCompetitors(Request $request, Competition $competition): RedirectResponse
+    {
+        $request->validate([
+            'competitor_ids' => 'sometimes|array',
+            'competitor_ids.*' => 'exists:competitors,id'
+        ]);
+
+        $competition->competitors()->sync($request->input('competitor_ids', []));
+
+        return redirect()
+            ->route('admin.competitions.edit', $competition)
+            ->with('success', 'Competitors assigned successfully.');
     }
 }
