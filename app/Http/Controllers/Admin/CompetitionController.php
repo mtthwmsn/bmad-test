@@ -106,4 +106,22 @@ class CompetitionController extends Controller
             ->route('admin.competitions.edit', $competition)
             ->with('success', 'Competitors assigned successfully.');
     }
+
+    /**
+     * Start running the competition (change status to active).
+     */
+    public function run(Competition $competition): RedirectResponse
+    {
+        if ($competition->status !== 'draft') {
+            return redirect()
+                ->route('admin.competitions.edit', $competition)
+                ->with('error', 'Only draft competitions can be run.');
+        }
+
+        $competition->update(['status' => 'active']);
+
+        return redirect()
+            ->route('run.dashboard', $competition)
+            ->with('success', 'Competition started successfully!');
+    }
 }

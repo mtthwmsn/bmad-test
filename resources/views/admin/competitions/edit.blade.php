@@ -4,9 +4,19 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Edit Competition') }}
             </h2>
-            <a href="{{ route('admin.competitions.index') }}" class="text-sm text-gray-600 hover:text-gray-900">
-                ← Back to Competitions
-            </a>
+            <div class="flex items-center gap-4">
+                @if ($competition->status === 'draft')
+                    <form method="POST" action="{{ route('admin.competitions.run', $competition) }}" class="inline">
+                        @csrf
+                        <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            ▶ Run Competition
+                        </button>
+                    </form>
+                @endif
+                <a href="{{ route('admin.competitions.index') }}" class="text-sm text-gray-600 hover:text-gray-900">
+                    ← Back to Competitions
+                </a>
+            </div>
         </div>
     </x-slot>
 
