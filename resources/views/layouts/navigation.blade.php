@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('admin.competitions.index')" :active="request()->routeIs('admin.competitions.*')">
                         {{ __('Competitions') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.competitors.index')" :active="request()->routeIs('admin.competitors.*')">
+                        {{ __('Competitors') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -75,6 +78,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.competitions.index')" :active="request()->routeIs('admin.competitions.*')">
                 {{ __('Competitions') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.competitors.index')" :active="request()->routeIs('admin.competitors.*')">
+                {{ __('Competitors') }}
             </x-responsive-nav-link>
         </div>
 

@@ -20,14 +20,11 @@ class StageController extends Controller
             'order' => 'required|integer|min:1',
             'name' => 'nullable|string|max:255',
             'expected_seconds' => 'required|integer|min:1',
-            'status' => 'required|in:pending,active,complete',
         ], [
             'order.required' => 'The stage order is required.',
             'order.min' => 'The stage order must be at least 1.',
             'expected_seconds.required' => 'The expected seconds is required.',
             'expected_seconds.min' => 'The expected seconds must be at least 1.',
-            'status.required' => 'The stage status is required.',
-            'status.in' => 'The status must be one of: pending, active, or complete.',
         ]);
 
         $competition->stages()->create($validated);
@@ -46,14 +43,11 @@ class StageController extends Controller
             'order' => 'required|integer|min:1',
             'name' => 'nullable|string|max:255',
             'expected_seconds' => 'required|integer|min:1',
-            'status' => 'required|in:pending,active,complete',
         ], [
             'order.required' => 'The stage order is required.',
             'order.min' => 'The stage order must be at least 1.',
             'expected_seconds.required' => 'The expected seconds is required.',
             'expected_seconds.min' => 'The expected seconds must be at least 1.',
-            'status.required' => 'The stage status is required.',
-            'status.in' => 'The status must be one of: pending, active, or complete.',
         ]);
 
         $stage->update($validated);

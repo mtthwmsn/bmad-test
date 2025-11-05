@@ -113,7 +113,7 @@
                         <h4 class="font-semibold mb-3">Add New Stage</h4>
                         <form method="POST" action="{{ route('admin.competitions.stages.store', $competition) }}">
                             @csrf
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label for="stage_order" class="block text-sm font-medium text-gray-700">Order *</label>
                                     <input type="number" name="order" id="stage_order" min="1" required
@@ -128,15 +128,6 @@
                                     <label for="stage_expected_seconds" class="block text-sm font-medium text-gray-700">Expected Seconds *</label>
                                     <input type="number" name="expected_seconds" id="stage_expected_seconds" min="1" required
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                </div>
-                                <div>
-                                    <label for="stage_status" class="block text-sm font-medium text-gray-700">Status *</label>
-                                    <select name="status" id="stage_status" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        <option value="pending">Pending</option>
-                                        <option value="active">Active</option>
-                                        <option value="complete">Complete</option>
-                                    </select>
                                 </div>
                             </div>
                             <div class="mt-4 flex justify-end gap-2">
@@ -160,16 +151,6 @@
                                             <div class="flex items-center gap-2 mb-2">
                                                 <span class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-semibold rounded">
                                                     Stage {{ $stage->order }}
-                                                </span>
-                                                @php
-                                                    $statusColors = [
-                                                        'pending' => 'bg-gray-100 text-gray-800',
-                                                        'active' => 'bg-green-100 text-green-800',
-                                                        'complete' => 'bg-blue-100 text-blue-800',
-                                                    ];
-                                                @endphp
-                                                <span class="px-2 py-1 text-xs font-semibold rounded {{ $statusColors[$stage->status] ?? 'bg-gray-100 text-gray-800' }}">
-                                                    {{ ucfirst($stage->status) }}
                                                 </span>
                                             </div>
                                             <h4 class="font-semibold text-lg">{{ $stage->name ?? 'Unnamed Stage' }}</h4>
@@ -195,7 +176,7 @@
                                         <form method="POST" action="{{ route('admin.stages.update', $stage) }}">
                                             @csrf
                                             @method('PUT')
-                                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                 <div>
                                                     <label class="block text-xs font-medium text-gray-700">Order *</label>
                                                     <input type="number" name="order" value="{{ $stage->order }}" min="1" required
@@ -210,14 +191,6 @@
                                                     <label class="block text-xs font-medium text-gray-700">Expected Seconds *</label>
                                                     <input type="number" name="expected_seconds" value="{{ $stage->expected_seconds }}" min="1" required
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-xs font-medium text-gray-700">Status *</label>
-                                                    <select name="status" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                        <option value="pending" {{ $stage->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                                        <option value="active" {{ $stage->status === 'active' ? 'selected' : '' }}>Active</option>
-                                                        <option value="complete" {{ $stage->status === 'complete' ? 'selected' : '' }}>Complete</option>
-                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="mt-4 flex justify-end gap-2">
@@ -244,14 +217,9 @@
                                         <div id="addMeasureForm{{ $stage->id }}" class="hidden mb-3 p-3 border rounded bg-gray-50">
                                             <form method="POST" action="{{ route('admin.stages.measures.store', $stage) }}">
                                                 @csrf
-                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                     <div>
-                                                        <label class="block text-xs font-medium text-gray-700">Name *</label>
-                                                        <input type="text" name="name" required
-                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                    </div>
-                                                    <div>
-                                                        <label class="block text-xs font-medium text-gray-700">Target (ml) *</label>
+                                                        <label class="block text-xs font-medium text-gray-700">Target Volume (ml) *</label>
                                                         <input type="number" name="target_ml" step="0.1" min="0.1" required
                                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                                                     </div>
@@ -281,10 +249,9 @@
                                                             <div class="flex-1">
                                                                 <div class="flex items-center gap-2">
                                                                     <span class="px-2 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded">
-                                                                        #{{ $measure->order }}
+                                                                        Measure #{{ $measure->order }}
                                                                     </span>
-                                                                    <span class="font-medium text-sm">{{ $measure->name }}</span>
-                                                                    <span class="text-xs text-gray-600">{{ $measure->target_ml }}ml</span>
+                                                                    <span class="font-medium text-sm">{{ $measure->target_ml }}ml</span>
                                                                 </div>
                                                             </div>
                                                             <div class="flex gap-2">
@@ -306,14 +273,9 @@
                                                             <form method="POST" action="{{ route('admin.measures.update', $measure) }}">
                                                                 @csrf
                                                                 @method('PUT')
-                                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                                     <div>
-                                                                        <label class="block text-xs font-medium text-gray-700">Name *</label>
-                                                                        <input type="text" name="name" value="{{ $measure->name }}" required
-                                                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                                                                    </div>
-                                                                    <div>
-                                                                        <label class="block text-xs font-medium text-gray-700">Target (ml) *</label>
+                                                                        <label class="block text-xs font-medium text-gray-700">Target Volume (ml) *</label>
                                                                         <input type="number" name="target_ml" value="{{ $measure->target_ml }}" step="0.1" min="0.1" required
                                                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                                                                     </div>

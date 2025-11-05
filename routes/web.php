@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CompetitionController;
+use App\Http\Controllers\Admin\CompetitorController;
 use App\Http\Controllers\Admin\MeasureController;
 use App\Http\Controllers\Admin\StageController;
 use App\Http\Controllers\ProfileController;
@@ -23,6 +24,7 @@ Route::middleware('auth')->group(function () {
 // Admin routes (referee only)
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('competitions', CompetitionController::class);
+    Route::resource('competitors', CompetitorController::class);
 
     // Stage routes
     Route::post('competitions/{competition}/stages', [StageController::class, 'store'])->name('competitions.stages.store');

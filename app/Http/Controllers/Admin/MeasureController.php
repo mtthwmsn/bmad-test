@@ -17,11 +17,9 @@ class MeasureController extends Controller
     public function store(Stage $stage): RedirectResponse
     {
         $validated = request()->validate([
-            'name' => 'required|string|max:255',
             'target_ml' => 'required|numeric|min:0.1',
             'order' => 'required|integer|min:1',
         ], [
-            'name.required' => 'The measure name is required.',
             'target_ml.required' => 'The target ml is required.',
             'target_ml.min' => 'The target ml must be at least 0.1.',
             'order.required' => 'The measure order is required.',
@@ -41,11 +39,9 @@ class MeasureController extends Controller
     public function update(Measure $measure): RedirectResponse
     {
         $validated = request()->validate([
-            'name' => 'required|string|max:255',
             'target_ml' => 'required|numeric|min:0.1',
             'order' => 'required|integer|min:1',
         ], [
-            'name.required' => 'The measure name is required.',
             'target_ml.required' => 'The target ml is required.',
             'target_ml.min' => 'The target ml must be at least 0.1.',
             'order.required' => 'The measure order is required.',

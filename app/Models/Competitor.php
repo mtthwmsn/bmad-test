@@ -27,6 +27,7 @@ class Competitor extends Model
         'first_name',
         'last_name',
         'bar_name',
+        'country_code',
         'instagram',
         'diffords_profile',
     ];

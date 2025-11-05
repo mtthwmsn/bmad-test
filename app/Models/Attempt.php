@@ -27,6 +27,7 @@ class Attempt extends Model
         'competition_id',
         'competitor_id',
         'stage_id',
+        'status',
         'started_at',
         'ended_at',
         'duration_ms',
@@ -40,6 +41,7 @@ class Attempt extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
+        'status' => 'string',
     ];
 
     /**

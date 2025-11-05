@@ -25,7 +25,6 @@ class Measure extends Model
      */
     protected $fillable = [
         'stage_id',
-        'name',
         'target_ml',
         'order',
     ];
